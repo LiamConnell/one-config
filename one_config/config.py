@@ -9,18 +9,20 @@ class ConfigError(Exception):
     pass
 
 
-class ConfigData:
-    data = {}
+_CONFIG_DATA = {}
 
 
 def build_config(name: str = sys.argv[0]):
-    if ConfigData.data.get(name):
+    if _CONFIG_DATA.get(name):
         raise ConfigError('This config has already been constructed')
     return ConfigBuilder(name)
 
 
 def get_config(name: str = sys.argv[0]):
-    return ConfigData.data[name]
+    try:
+        return _CONFIG_DATA[name]
+    except KeyError:
+        raise ConfigError('This config has not been constructed yet')
 
 
 class ConfigBuilder:
@@ -31,7 +33,7 @@ class ConfigBuilder:
         with open(path, 'r') as f:
             data = yaml.load(f, Loader=yaml.FullLoader)
         data = AttributeDict(data)
-        ConfigData.data[self.config_key] = data
+        _CONFIG_DATA[self.config_key] = data
         return data
 
 
