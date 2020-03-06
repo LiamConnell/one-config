@@ -1,41 +1,38 @@
+import sys
+
 import yaml
 
-__all__ = ['CONFIG']
+__all__ = ['build_config', 'get_config', 'ConfigError']
 
 
-class CONFIG:
-    """
-    The CONFIG object is an object whose attributes are the config params. In this way it
-    acts like a typical `config.py` object. Going a step further, all nested parameters are
-    represented as AttributeDicts, so they can be accessed with `CONFIG.my.nested.attr` rather
-    than CONFIG.my['nested']['attr'].
+class ConfigError(Exception):
+    pass
 
-    The CONFIG object must be constructed with the `construct_config()` class method once (and only
-    once, at the beginning of the program. It is parametrized by a yaml file whose path is specified
-    in the constructor method.
 
-    Example:
-        First, construct the config at the entry point of the program:
-        >>> # run.py
-        >>> from one_config import CONFIG
-        >>> CONFIG.construct_config('path/to/prod_config.yaml')
-        Then use it from any module in your codebase:
-        >>> # my_module.py
-        >>> from one_config import CONFIG
-        >>> param1 = CONFIG.my.favorite.parameter
-    """
-    _is_constructed = False
+class ConfigData:
+    data = {}
 
-    @classmethod
-    def construct_config(cls, path):
-        if cls._is_constructed:
-            raise RuntimeError('This config object has already been constructed')
+
+def build_config(name: str = sys.argv[0]):
+    if ConfigData.data.get(name):
+        raise ConfigError('This config has already been constructed')
+    return ConfigBuilder(name)
+
+
+def get_config(name: str = sys.argv[0]):
+    return ConfigData.data[name]
+
+
+class ConfigBuilder:
+    def __init__(self, config_key: str):
+        self.config_key = config_key
+
+    def from_yaml(self, path):
         with open(path, 'r') as f:
             data = yaml.load(f, Loader=yaml.FullLoader)
-        for key, value in data.items():
-            if isinstance(value, dict):
-                value = AttributeDict(value)
-            setattr(cls, key, value)
+        data = AttributeDict(data)
+        ConfigData.data[self.config_key] = data
+        return data
 
 
 class AttributeDict(dict):
