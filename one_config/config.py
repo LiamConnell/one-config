@@ -17,11 +17,11 @@ class CONFIG:
     Example:
         First, construct the config at the entry point of the program:
         >>> # run.py
-        >>> from config import CONFIG
+        >>> from one_config import CONFIG
         >>> CONFIG.construct_config('path/to/prod_config.yaml')
         Then use it from any module in your codebase:
         >>> # my_module.py
-        >>> from config import CONFIG
+        >>> from one_config import CONFIG
         >>> param1 = CONFIG.my.favorite.parameter
     """
     _is_constructed = False
