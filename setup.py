@@ -1,11 +1,15 @@
 from setuptools import setup, find_packages
+import one_config
+
+VERSION = one_config.__version__
 
 with open("README.md", "r") as fh:
     README = fh.read()
 
+
 setup(
     name="one-config",
-    version="0.1.0",
+    version=VERSION,
     description="A universally accessible config object that only has to be constructed once",
     long_description=README,
     long_description_content_type="text/markdown",
