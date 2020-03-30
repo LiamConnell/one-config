@@ -1,7 +1,6 @@
 from setuptools import setup, find_packages
-import one_config
 
-VERSION = one_config.__version__
+VERSION = '0.2.2'
 
 with open("README.md", "r") as fh:
     README = fh.read()
